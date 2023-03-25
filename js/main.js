@@ -68,8 +68,15 @@ function draw() {
     dx = -dx;
   }
 
-  if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+  if (y + dy < ballRadius) {
     dy = -dy;
+  }else if(y + dy > canvas.height - ballRadius) {
+    if(x > paddelX && x < paddelX + paddleWidth) {
+      dy = -dy;
+    }else{
+      alert("GAME OVER");
+      document.location.reload();
+    }
   }
 
   //왼쪽키 또는 오른쪽 키를 눌렀을 경우 7픽셀씩 움직임
@@ -85,3 +92,5 @@ function draw() {
 }
 
 setInterval(draw, 10); //10 밀리 초마다 실행
+
+
