@@ -18,6 +18,23 @@ var paddelX = (canvas.width - paddleWidth) / 2;
 var rightPressed = false;
 var leftPressed = false;
 
+// 벽돌과 관련된 변수
+var brickRowCount = 3;
+var brickColumnCount = 5;
+var brickWidth = 40;
+var brickHeight = 20;
+var brickPadding = 10;
+var brickOffsetTop = 30;
+var brickOffsetLeft = 30;
+
+var bricks = [];
+for (var c = 0; c < brickColumnCount; c++) {
+  bricks[c] = [];
+  for (var r = 0; r < brickRowCount; r++) {
+    bricks[c][r] = { x: 0, y: 0 };
+  }
+}
+
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -57,8 +74,27 @@ function drawPaddle() {
   ctx.closePath();
 }
 
+function drawBricks() {
+  for (var c = 0; c < brickColumnCount; c++) {
+    for (var r = 0; r < brickRowCount; r++) {
+      var brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+      var brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+
+      bricks[c][r].x = brickX;
+      bricks[c][r].y = brickY;
+
+      ctx.beginPath();
+      ctx.rect(brickX, brickY, brickWidth, brickHeight);
+      ctx.fillstyle = "#0095DD";
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); //캔버스 초기화
+  drawBricks();
   drawBall();
   drawPaddle();
 
@@ -70,10 +106,10 @@ function draw() {
 
   if (y + dy < ballRadius) {
     dy = -dy;
-  }else if(y + dy > canvas.height - ballRadius) {
-    if(x > paddelX && x < paddelX + paddleWidth) {
+  } else if (y + dy > canvas.height - ballRadius) {
+    if (x > paddelX && x < paddelX + paddleWidth) {
       dy = -dy;
-    }else{
+    } else {
       alert("GAME OVER");
       document.location.reload();
     }
@@ -92,5 +128,3 @@ function draw() {
 }
 
 setInterval(draw, 10); //10 밀리 초마다 실행
-
-
