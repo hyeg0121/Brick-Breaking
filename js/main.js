@@ -27,6 +27,9 @@ var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 
+//점수 추가와 승패 판정 변수
+var score = 0;
+
 var bricks = [];
 for (var c = 0; c < brickColumnCount; c++) {
   bricks[c] = [];
@@ -61,16 +64,28 @@ function keyUpHandler(e) {
 //충돌 감지 함수
 function collisionDetection() {
   for(var c=0; c<brickColumnCount; c++) {
-    for(var r=0; r<brickRowCount; r++) {
-      var b = bricks[c][r];
-      if(b.status == 1) {
-        if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
-          dy = -dy;
-          b.status = 0;
-        }
+      for(var r=0; r<brickRowCount; r++) {
+          var b = bricks[c][r];
+          if(b.status == 1) {
+              if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                  dy = -dy;
+                  b.status = 0;
+                  score++;
+                  if(score == brickRowCount*brickColumnCount) {
+                      alert("YOU WIN, CONGRATULATIONS!");
+                      document.location.reload();
+                  }
+              }
+          }
       }
-    }
   }
+}
+
+//점수 계산 함수
+function drawScore(){
+  ctx.font = "16px Arial";
+  ctx.fillstyle = "#0095DD";
+  ctx.fillText("Score: "+score, 8, 20);
 }
 
 function drawBall() {
@@ -115,6 +130,7 @@ function draw() {
   drawBall();
   drawPaddle();
   collisionDetection();
+  drawScore();
 
   //공이 벽에 닿으면 튕기기
   //공의 원점과 벽 사이의 거리가 공의 반지름과 같아졌을 때 공의 움직임이 바뀜
