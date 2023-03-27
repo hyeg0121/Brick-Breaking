@@ -26,8 +26,6 @@ var brickHeight = 20;
 var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
-
-//점수 추가와 승패 판정 변수
 var score = 0;
 
 var bricks = [];
@@ -40,6 +38,7 @@ for (var c = 0; c < brickColumnCount; c++) {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);// 마우스 움직임 듣기
 
 //왼쪽 또는 오른쪽 키가 눌렸을 경우 발생하는 이벤트
 function keyDownHandler(e) {
@@ -61,31 +60,34 @@ function keyUpHandler(e) {
   }
 }
 
-//충돌 감지 함수
-function collisionDetection() {
-  for(var c=0; c<brickColumnCount; c++) {
-      for(var r=0; r<brickRowCount; r++) {
-          var b = bricks[c][r];
-          if(b.status == 1) {
-              if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
-                  dy = -dy;
-                  b.status = 0;
-                  score++;
-                  if(score == brickRowCount*brickColumnCount) {
-                      alert("YOU WIN, CONGRATULATIONS!");
-                      document.location.reload();
-                  }
-              }
-          }
-      }
+// 패들 움직임을 마우스 움직임에 고정
+function mouseMoveHandler(e) {
+  var relativeX = e.clientX - canvas.offsetLeft;
+  // relativeX가 0보다 크고 캔버스 너비보다 작으면 포인터는 캔버스 경계 내에 있음
+  if ( relativeX > 0 && relativeX < canvas.width) {
+    paddelX = relativeX - paddleWidth/2;
   }
 }
 
-//점수 계산 함수
-function drawScore(){
-  ctx.font = "16px Arial";
-  ctx.fillstyle = "#0095DD";
-  ctx.fillText("Score: "+score, 8, 20);
+//충돌 감지 함수
+function collisionDetection() {
+  for(var c=0; c<brickColumnCount; c++) {
+    for(var r=0; r<brickRowCount; r++) {
+      var b = bricks[c][r];
+      if(b.status == 1) {
+        if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+          dy = -dy;
+          b.status = 0;
+          score++;
+          if ( score == brickColumnCount*brickColumnCount) {
+            alert("YOU WIN, CONGRATS!");
+            document.location.reload();
+            clearInterval(interval);
+          }
+        }
+      }
+    }
+  }
 }
 
 function drawBall() {
@@ -124,13 +126,19 @@ function drawBricks() {
   }
 }
 
+function drawScore() {
+  ctx.font = "16px Arial";
+  ctx.fillstyle = "#0095DD";
+  ctx.fillText("Score: "+score, 8, 20);
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); //캔버스 초기화
   drawBricks();
   drawBall();
   drawPaddle();
-  collisionDetection();
   drawScore();
+  collisionDetection();
 
   //공이 벽에 닿으면 튕기기
   //공의 원점과 벽 사이의 거리가 공의 반지름과 같아졌을 때 공의 움직임이 바뀜
