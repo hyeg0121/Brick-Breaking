@@ -136,7 +136,7 @@ function drawLives() {
 }
 
 function draw() {
- ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   drawBall();
   drawPaddle();
@@ -186,4 +186,3 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw();
